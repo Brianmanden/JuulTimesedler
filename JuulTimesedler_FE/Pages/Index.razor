@@ -1,3 +1,146 @@
 ﻿@page "/"
+@using SharedModels.DTOs;
+@using Microsoft.Extensions.Configuration;
+@inject IndexViewModel ViewModel;
 
-<h1>Hello, world!</h1>
+<PageTitle>Juul Timesedler</PageTitle>
+
+@*HEADLINE*@
+<MudPaper Elevation="5" Class="pa-3 mt-5 d-flex justify-center flex-grow-1 gap-4">
+    <MudText Typo="Typo.h4">Juul Timesedler</MudText>
+</MudPaper>
+
+@* USER PROFILE *@
+<MudPaper Elevation="5" Class="pa-4 my-4">
+    <MudText Typo="Typo.h5">User Profile</MudText>
+
+    @if (ViewModel.User is null)
+    {
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    }
+    else
+    {
+        <MudTextField T="int" Adornment="Adornment.Start" AdornmentText="Id: " AdornmentColor="Color.Primary" Value="@ViewModel.User.UserId" ReadOnly />
+        <MudTextField T="string" Adornment="Adornment.Start" AdornmentText="Name: " AdornmentColor="Color.Primary" Text="@ViewModel.User.UserName" ReadOnly />
+    }
+</MudPaper>
+
+@*WEEKS & DAYS*@
+<MudPaper Elevation="5" Class="pa-4 my-4">
+    <MudText Typo="Typo.h6">Weeks &amp; days</MudText>
+
+    @if (ViewModel.Timesheet is null)
+    {
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    }
+    else
+    {
+        @*GetTimesheetForWeekNumber*@
+        <MudAppBar Color="Color.Primary" Fixed="false">
+            <MudButton Variant="Variant.Filled" Icon="@Icons.Material.Filled.ChevronLeft" Title="Prev. Week" OnClick="ViewModel.GetTimesheetPrevWeek" />
+            <MudSpacer />
+            <MudText Typo="Typo.h5">Week # @ViewModel.Timesheet.WeekNumber</MudText>
+            <MudSpacer />
+            <MudButton Icon="@Icons.Material.Filled.ChevronRight" Title="Next Week" />
+        </MudAppBar>
+
+        <MudTabs AlwaysShowScrollButtons="true"
+                 Class="mt-4"
+                 Color="@Color.Info"
+                 Rounded="true">
+            @for (int i = 0; i < @ViewModel.Timesheet.WeekDays.Length; i++)
+            {
+                int localVariable = i;
+                <MudTabPanel Text=@ViewModel.FormattedWeekDate(localVariable) />
+            }
+        </MudTabs>
+    }
+</MudPaper>
+
+<MudForm>
+    @*PROJECTS*@
+    <MudPaper Elevation="5" Class="pa-4 my-4">
+        <MudItem>
+            <MudText Typo="Typo.h6">Projects</MudText>
+
+            <MudAutocomplete @bind-Value="ViewModel.SelectedProject"
+                             ToStringFunc="@(e=> e==null? "" : $"{e.ProjectId} - {e.ProjectName}")"
+                                  Clearable
+                             Label="Select project"
+                             OnClearButtonClick="ViewModel.ClearProject"
+                             SearchFunc="ViewModel.ChooseProject"
+                             T="GetProjectDTO" />
+        </MudItem>
+    </MudPaper>
+
+    @*STARTING TIME & ENDING TIME*@
+    <MudPaper Elevation="5" Class="pa-4 my-4">
+        @* STARTING TIME *@
+        <MudText Typo="Typo.h6">Times</MudText>
+        
+        <MudItem>
+            <MudTimePicker Adornment="Adornment.Start" Label="Starting Time" PickerVariant="PickerVariant.Dialog" @bind-Time="ViewModel.StartingTime" />
+        </MudItem>
+        <br />
+
+        @* ENDING TIME *@
+        <MudItem>
+            <MudTimePicker Adornment="Adornment.Start" Label="Ending Time" PickerVariant="PickerVariant.Dialog" @bind-Time="ViewModel.EndingTime" />
+        </MudItem>
+    </MudPaper>
+
+    @*TASKS*@
+    <MudPaper Elevation="5" Class="pa-4 my-4">
+        <MudText Typo="Typo.h6">Tasks</MudText>
+
+        @if (ViewModel.GroupedTasks is null)
+        {
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        }
+        else
+        {
+            <MudTreeView MultiSelection="true" @bind-SelectedValues="ViewModel.SelectedTasks">
+                @foreach (var taskGroup in ViewModel.GroupedTasks)
+                {
+                    <MudTreeViewItem Value="@taskGroup.TaskGroupName">
+                        @foreach (var taskName in taskGroup.TaskNames)
+                    {
+                        <MudTreeViewItem Value="@taskName" />
+                    }
+                </MudTreeViewItem>
+                }
+            </MudTreeView>
+
+
+            @if (ViewModel.SelectedTasks?.Count > 0)
+            {
+                @foreach (var task in ViewModel.SelectedTasks)
+                {
+                    <MudChip Color="Color.Primary"><MudIcon Icon="@Icons.Material.Filled.TaskAlt" Size="Size.Medium" Style="padding-right: 10px;" />@task</MudChip>
+                }
+                <MudText><strong>@ViewModel.SelectedTasks.Count tasks selected.</strong></MudText>
+            }
+            else
+            {
+                <MudText><strong>No tasks selected.</strong></MudText>
+            }
+        }
+    </MudPaper>
+
+    @*COMMENTS*@
+    <MudPaper Elevation="5" Class="pa-4 my-4">
+        <MudText Typo="Typo.h6">Comments</MudText>
+        <MudTextField Value="ViewModel.Comments" T="string" Variant="Variant.Outlined" Text="200.- for diesel" Lines="5" />
+    </MudPaper>
+
+    @*SUBMIT*@
+    <MudButton Class="mb-4" Color="Color.Primary" Variant="Variant.Filled" OnClick="ViewModel.SendForm">Send</MudButton>
+
+</MudForm>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await ViewModel.Initialize();
+    }
+}
