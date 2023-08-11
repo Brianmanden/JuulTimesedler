@@ -1,5 +1,6 @@
 ﻿using SharedModels.DTOs;
 using JuulTimesedler_BE.Interfaces;
+using SharedModels.Enums;
 
 namespace JuulTimesedler_BE.Services;
 
@@ -11,20 +12,20 @@ public class TimesheetService : ITimesheetService
         _timeService = timeService;
     }
 
-    public GetTimesheetDTO GetTimesheetByWeekNumber(int weekNumber, int workerId)
+    public Timesheet GetTimesheetByWeekNumber(int weekNumber, int workerId)
     {
         int internalWeekNumber = weekNumber;
-        List<GetTimesheetDTO> demoTimesheets = new List<GetTimesheetDTO>();
+        List<Timesheet> demoTimesheets = new List<Timesheet>();
 
-        GetTimesheetDTO demoTimesheet1 = GetTimesheetForCurrentWeek(workerId);
+        Timesheet demoTimesheet1 = GetTimesheetForCurrentWeek(workerId);
         demoTimesheet1.WeekNumber = internalWeekNumber;
         demoTimesheets.Add(demoTimesheet1);
 
-        GetTimesheetDTO demoTimesheet2 = GetTimesheetForCurrentWeek(workerId);
+        Timesheet demoTimesheet2 = GetTimesheetForCurrentWeek(workerId);
         demoTimesheet2.WeekNumber = internalWeekNumber - 1;
         demoTimesheets.Add(demoTimesheet2);
 
-        GetTimesheetDTO demoTimesheet3 = GetTimesheetForCurrentWeek(workerId);
+        Timesheet demoTimesheet3 = GetTimesheetForCurrentWeek(workerId);
         demoTimesheet3.WeekNumber = internalWeekNumber - 2;
         demoTimesheets.Add(demoTimesheet3);
 
@@ -33,13 +34,15 @@ public class TimesheetService : ITimesheetService
         return result;
     }
 
-    public GetTimesheetDTO GetTimesheetForCurrentWeek(int workerId)
+    public Timesheet GetTimesheetForCurrentWeek(int workerId)
     {
         //TODO: Should fetch timesheet from persistance layer (Umb DB)
         int weekNumber = _timeService.GetCurrentWeekNumber();
-        GetTimesheetDTO currentTimesheetWeek = new();
+        Timesheet currentTimesheetWeek = new();
         currentTimesheetWeek.WeekNumber = weekNumber;
-        currentTimesheetWeek.WeekDays = new string[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+
+        currentTimesheetWeek.WeekDays = Enum.GetValues(typeof(WeekDays)).Cast<WeekDays>().ToList();
+
         currentTimesheetWeek.WeekDates = _timeService.GetCurrentWeekDates(weekNumber);
 
         return currentTimesheetWeek;

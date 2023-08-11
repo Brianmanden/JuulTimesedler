@@ -20,18 +20,16 @@ public class TimesheetController : Controller
     }
 
     [HttpGet("api/gettimesheetcurrentweek/{WorkerId}")]
-    public async Task<GetTimesheetDTO> GetCurrentTimesheetWeek(int WorkerId)
+    public async Task<Timesheet> GetCurrentTimesheetWeek(int WorkerId)
     {
-        TimeService timeService = new();
-        GetTimesheetDTO timesheetWeek = _timesheetService.GetTimesheetForCurrentWeek(WorkerId);
-
+        Timesheet timesheetWeek = _timesheetService.GetTimesheetForCurrentWeek(WorkerId);
         return timesheetWeek;
     }
 
     [HttpGet("api/gettimesheetforweek/{WeekNumber}/{WorkerId}")]
-    public async Task<GetTimesheetDTO> GetTimesheetByWeekNumber(int WeekNumber, int WorkerId)
+    public async Task<Timesheet> GetTimesheetByWeekNumber(int WeekNumber, int WorkerId)
     {
-        GetTimesheetDTO timesheet = _timesheetService.GetTimesheetByWeekNumber(WeekNumber, WorkerId);
+        Timesheet timesheet = _timesheetService.GetTimesheetByWeekNumber(WeekNumber, WorkerId);
         return timesheet;
     }
 

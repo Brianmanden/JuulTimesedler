@@ -16,16 +16,14 @@ public class TimesheetsService
         _http = http;
     }
 
-    public async Task<GetTimesheetDTO> GetCurrentTimesheetWeek(int workerId)
+    public async Task<Timesheet> GetCurrentTimesheetWeek(int workerId)
     {
-        return await _http.GetFromJsonAsync<GetTimesheetDTO>($"{_getTimesheetCurrentWeekEndpoint}/{workerId}");
+        return await _http.GetFromJsonAsync<Timesheet>($"{_getTimesheetCurrentWeekEndpoint}/{workerId}");
     }
 
-    public async Task<GetTimesheetDTO> GetTimesheetForWeekNumber(int weekNumber, int workerId)
+    public async Task<Timesheet> GetTimesheetForWeekNumber(int weekNumber, int workerId)
     {
-        //[HttpGet("api/gettimesheetforweek/{weekNumber}/{workerId}")]
-        var tmp = $"{_getTimesheetForWeekEndpoint}/{weekNumber}/{workerId}";
-        return await _http.GetFromJsonAsync<GetTimesheetDTO>($"{_getTimesheetForWeekEndpoint}/{weekNumber}/{workerId}");
+        return await _http.GetFromJsonAsync<Timesheet>($"{_getTimesheetForWeekEndpoint}/{weekNumber}/{workerId}");
     }
 
     public async Task PutCurrentTimesheetWeek(PutTimesheetDTO timesheetCurrentWeek)

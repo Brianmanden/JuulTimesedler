@@ -1,6 +1,7 @@
 ﻿using SharedModels.Models;
 using SharedModels.DTOs;
 using JuulTimesedler_FE.Services;
+using SharedModels.Enums;
 
 namespace JuulTimesedler_FE.ViewModels;
 
@@ -22,7 +23,7 @@ public class IndexViewModel
     public string? Comments { get; set; }
 
     public string? TasksSearchText { get; set; }
-    public GetTimesheetDTO Timesheet { get; set; }
+    public Timesheet Timesheet { get; set; }
     public TimeSpan? StartingTime { get; set; } // = new TimeSpan(02, 35, 00);
     public TimeSpan? EndingTime { get; set; } // = new TimeSpan(02, 35, 00);
 
@@ -66,7 +67,8 @@ public class IndexViewModel
                 EndTime = EndingTime.ToString() ?? string.Empty,
                 WorkdayComments = Comments,
                 SelectedTasks = SelectedTasks,
-                WeekDay = 0,
+                WeekDay = WeekDays.Monday,
+                WeekDate = 0,
             },
             new Workday
             {
@@ -75,7 +77,8 @@ public class IndexViewModel
                 EndTime = EndingTime.ToString() ?? string.Empty,
                 WorkdayComments = Comments,
                 SelectedTasks = SelectedTasks,
-                WeekDay = 1,
+                WeekDay = WeekDays.Tuesday,
+                WeekDate = 1,
             },
         };
         currentWeekTimesheet.Workdays = workDays;
@@ -85,7 +88,7 @@ public class IndexViewModel
 
     public string FormattedWeekDate(int i)
     {
-        string shortFormattedWeekdate = $"{Timesheet.WeekDays[i].Substring(0, 3)}-{Timesheet.WeekDates[i]}.";
+        string shortFormattedWeekdate = $"{Timesheet.WeekDays[i].ToString().Substring(0, 3)}-{Timesheet.WeekDates[i]}.";
         string fullFormattedWeekdate = $"{Timesheet.WeekDays[i]} - {Timesheet.WeekDates[i]}";
 
         return shortFormattedWeekdate;

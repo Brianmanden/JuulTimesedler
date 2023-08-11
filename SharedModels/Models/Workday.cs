@@ -1,8 +1,11 @@
-﻿namespace SharedModels.Models;
+﻿using SharedModels.Enums;
+
+namespace SharedModels.Models;
 
 public class Workday
 {
-    public int WeekDay { get; set; }
+    public WeekDays WeekDay { get; set; }
+    public int WeekDate { get; set; }
     public int? SelectedProjectId { get; set; }
     public HashSet<string>? SelectedTasks { get; set; }
     public string? StartTime { get; set; }

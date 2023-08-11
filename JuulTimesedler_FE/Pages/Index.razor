@@ -48,7 +48,7 @@
                  Class="mt-4"
                  Color="@Color.Info"
                  Rounded="true">
-            @for (int i = 0; i < @ViewModel.Timesheet.WeekDays.Length; i++)
+            @for (int i = 0; i < @ViewModel.Timesheet.WeekDays.Count; i++)
             {
                 int localVariable = i;
                 <MudTabPanel Text=@ViewModel.FormattedWeekDate(localVariable) />
