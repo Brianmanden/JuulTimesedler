@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Json;
 using SharedModels.DTOs;
+using SharedModels.Models;
 
 namespace JuulTimesedler_FE.Services;
 

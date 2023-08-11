@@ -1,4 +1,4 @@
-﻿using SharedModels.DTOs;
+﻿using SharedModels.Models;
 
 namespace JuulTimesedler_BE.Interfaces;
 

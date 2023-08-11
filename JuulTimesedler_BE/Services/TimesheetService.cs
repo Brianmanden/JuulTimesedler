@@ -1,4 +1,4 @@
-﻿using SharedModels.DTOs;
+﻿using SharedModels.Models;
 using JuulTimesedler_BE.Interfaces;
 using SharedModels.Enums;
 

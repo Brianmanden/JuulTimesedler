@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Core.Services;
+using SharedModels.Models;
 using SharedModels.DTOs;
 using JuulTimesedler_BE.Interfaces;
 using JuulTimesedler_BE.Services;

@@ -1,6 +1,6 @@
 ﻿using SharedModels.Enums;
 
-namespace SharedModels.DTOs;
+namespace SharedModels.Models;
 
 public class Timesheet
 {
