@@ -39,27 +39,79 @@ public class TimesheetService : ITimesheetService
     {
         //TODO: Should fetch timesheet from persistance layer (Umb DB)
         int weekNumber = _timeService.GetCurrentWeekNumber();
+        int[] weekDates = _timeService.GetCurrentWeekDates(weekNumber);
+
         Timesheet currentTimesheetWeek = new();
         currentTimesheetWeek.WeekNumber = weekNumber;
         currentTimesheetWeek.WeekDays = Enum.GetValues(typeof(WeekDays)).Cast<WeekDays>().ToList();
-        currentTimesheetWeek.WeekDates = _timeService.GetCurrentWeekDates(weekNumber);
+        currentTimesheetWeek.WeekDates = weekDates;
+
         currentTimesheetWeek.Workdays = new List<Workday>
         {
             //DEMO WORKDAYS
             new Workday
             {
                 WeekDay = WeekDays.Monday,
-                WeekDate = 7,
+                WeekDate = weekDates[0],
                 SelectedProjectId = 1113,
-                WorkdayComments = "test 1"
+                WorkdayComments = "test 1",
+                StartTime = new TimeSpan(7, 45, 0),
+                EndTime = new TimeSpan(16, 15, 0),
             },
             new Workday
             {
                 WeekDay = WeekDays.Tuesday,
-                WeekDate = 8,
+                WeekDate = weekDates[1],
+                SelectedProjectId = 1104,
+                WorkdayComments = "test 2",
+                StartTime = new TimeSpan(8, 0, 0),
+                EndTime = new TimeSpan(15, 45, 0),
+            },
+            new Workday
+            {
+                WeekDay = WeekDays.Wednesday,
+                WeekDate = weekDates[2],
                 SelectedProjectId = 1113,
-                WorkdayComments = "test 2"
-            }
+                WorkdayComments = "test 3",
+                StartTime = new TimeSpan(),
+                EndTime = new TimeSpan(),
+            },
+            new Workday
+            {
+                WeekDay = WeekDays.Thursday,
+                WeekDate = weekDates[3],
+                SelectedProjectId = 1104,
+                WorkdayComments = "test 4",
+                StartTime = new TimeSpan(),
+                EndTime = new TimeSpan(),
+            },
+            new Workday
+            {
+                WeekDay = WeekDays.Friday,
+                WeekDate = weekDates[4],
+                SelectedProjectId = 1113,
+                WorkdayComments = "test 5",
+                StartTime = new TimeSpan(),
+                EndTime = new TimeSpan(),
+            },
+            new Workday
+            {
+                WeekDay = WeekDays.Sunday,
+                WeekDate = weekDates[5],
+                SelectedProjectId = 1104,
+                WorkdayComments = "test 6",
+                StartTime = new TimeSpan(),
+                EndTime = new TimeSpan(),
+            },
+            new Workday
+            {
+                WeekDay = WeekDays.Sunday,
+                WeekDate = weekDates[6],
+                SelectedProjectId = 1113,
+                WorkdayComments = "test 7",
+                StartTime = new TimeSpan(),
+                EndTime = new TimeSpan(),
+            },
         };
 
         return currentTimesheetWeek;
