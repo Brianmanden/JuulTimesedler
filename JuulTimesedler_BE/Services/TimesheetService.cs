@@ -43,19 +43,16 @@ public class TimesheetService : ITimesheetService
         currentTimesheetWeek.WeekNumber = weekNumber;
         currentTimesheetWeek.WeekDays = Enum.GetValues(typeof(WeekDays)).Cast<WeekDays>().ToList();
         currentTimesheetWeek.WeekDates = _timeService.GetCurrentWeekDates(weekNumber);
-        currentTimesheetWeek.Workdays = new List<Workday>();
-
-        //DEMO WORKDAYS
-        currentTimesheetWeek.Workdays.Add(
+        currentTimesheetWeek.Workdays = new List<Workday>
+        {
+            //DEMO WORKDAYS
             new Workday
             {
                 WeekDay = WeekDays.Monday,
                 WeekDate = 7,
                 SelectedProjectId = 1113,
                 WorkdayComments = "test 1"
-            }
-        );
-        currentTimesheetWeek.Workdays.Add(
+            },
             new Workday
             {
                 WeekDay = WeekDays.Tuesday,
@@ -63,7 +60,7 @@ public class TimesheetService : ITimesheetService
                 SelectedProjectId = 1113,
                 WorkdayComments = "test 2"
             }
-        );
+        };
 
         return currentTimesheetWeek;
     }
