@@ -1,7 +1,7 @@
-﻿using SharedModels.Models;
+﻿using SharedModels.Enums;
+using SharedModels.Models;
 using SharedModels.DTOs;
 using JuulTimesedler_FE.Services;
-using SharedModels.Enums;
 
 namespace JuulTimesedler_FE.ViewModels;
 
@@ -12,9 +12,9 @@ public class IndexViewModel
     private TasksService _tasksService;
     private TimesheetsService _timesheetsService;
 
-    public bool IsLoading { get; set; }
-
     public User User { get; set; }
+
+    public int ActiveDayIndex = 0;
 
     public GetProjectDTO[]? Projects;
     public GetProjectDTO SelectedProject { get; set; }
@@ -48,7 +48,14 @@ public class IndexViewModel
 
     public async void GetTimesheetPrevWeek()
     {
-        Timesheet = await _timesheetsService.GetTimesheetForWeekNumber(Timesheet.WeekNumber - 1, User.UserId);
+        int localPrevWeek = Timesheet.WeekNumber - 1;
+        Timesheet = await _timesheetsService.GetTimesheetForWeekNumber(localPrevWeek, User.UserId);
+    }
+
+    public async void GetTimesheetNextWeek()
+    {
+        int localNextWeek = Timesheet.WeekNumber + 1;
+        Timesheet = await _timesheetsService.GetTimesheetForWeekNumber(localNextWeek, User.UserId);
     }
 
     public async Task SendForm()
@@ -56,29 +63,36 @@ public class IndexViewModel
         PutTimesheetDTO currentWeekTimesheet = new PutTimesheetDTO();
         currentWeekTimesheet.WorkerId = User.UserId;
         currentWeekTimesheet.WeekNumber = Timesheet.WeekNumber;
+
         List<Workday> workDays = new List<Workday>
         {
             new Workday
             {
                 SelectedProjectId = SelectedProject?.ProjectId ?? null,
-                StartTime = StartingTime.ToString() ?? string.Empty,
-                EndTime = EndingTime.ToString() ?? string.Empty,
+                StartTime = StartingTime ?? new TimeSpan(),
+                EndTime = EndingTime ?? new TimeSpan(),
                 WorkdayComments = Comments,
                 SelectedTasks = SelectedTasks,
-                WeekDay = WeekDays.Monday,
-                WeekDate = 0,
+                WeekDay = WeekDays.Wednesday,
+                WeekDate = 9,
             },
             new Workday
             {
                 SelectedProjectId = SelectedProject?.ProjectId ?? null,
-                StartTime = StartingTime.ToString() ?? string.Empty,
-                EndTime = EndingTime.ToString() ?? string.Empty,
+                StartTime = StartingTime ?? new TimeSpan(),
+                EndTime = EndingTime ?? new TimeSpan(),
                 WorkdayComments = Comments,
                 SelectedTasks = SelectedTasks,
-                WeekDay = WeekDays.Tuesday,
-                WeekDate = 1,
+                WeekDay = WeekDays.Thursday,
+                WeekDate = 10,
             },
         };
+
+        foreach (Workday workday in Timesheet.Workdays)
+        {
+            workDays.Add(workday);
+        }
+
         currentWeekTimesheet.Workdays = workDays;
 
         await _timesheetsService.PutCurrentTimesheetWeek(currentWeekTimesheet);

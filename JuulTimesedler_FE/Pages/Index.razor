@@ -37,17 +37,22 @@
     {
         @*GetTimesheetForWeekNumber*@
         <MudAppBar Color="Color.Primary" Fixed="false">
-            <MudButton Variant="Variant.Filled" Icon="@Icons.Material.Filled.ChevronLeft" Title="Prev. Week" OnClick="ViewModel.GetTimesheetPrevWeek" />
+            <MudButton Title="Prev. Week" OnClick="ViewModel.GetTimesheetPrevWeek">
+                <MudIcon Class="mud-theme-primary" Icon="@Icons.Material.Filled.ChevronLeft" />
+            </MudButton>
             <MudSpacer />
             <MudText Typo="Typo.h5">Week # @ViewModel.Timesheet.WeekNumber</MudText>
             <MudSpacer />
-            <MudButton Icon="@Icons.Material.Filled.ChevronRight" Title="Next Week" />
+            <MudButton Title="Next Week" OnClick="ViewModel.GetTimesheetNextWeek">
+                <MudIcon Class="mud-theme-primary" Icon="@Icons.Material.Filled.ChevronRight" />
+            </MudButton>
         </MudAppBar>
 
         <MudTabs AlwaysShowScrollButtons="true"
                  Class="mt-4"
                  Color="@Color.Info"
-                 Rounded="true">
+                 Rounded="true"
+        @bind-ActivePanelIndex="ViewModel.ActiveDayIndex">
             @for (int i = 0; i < @ViewModel.Timesheet.WeekDays.Count; i++)
             {
                 int localVariable = i;
@@ -66,40 +71,48 @@
             <MudAutocomplete @bind-Value="ViewModel.SelectedProject"
                              ToStringFunc="@(e=> e==null? "" : $"{e.ProjectId} - {e.ProjectName}")"
                                   Clearable
-                             Label="Select project"
-                             OnClearButtonClick="ViewModel.ClearProject"
-                             SearchFunc="ViewModel.ChooseProject"
-                             T="GetProjectDTO" />
-        </MudItem>
-    </MudPaper>
+                              Label="Select project"
+                              OnClearButtonClick="ViewModel.ClearProject"
+                              SearchFunc="ViewModel.ChooseProject"
+                              T="GetProjectDTO" />
+         </MudItem>
+     </MudPaper>
 
-    @*STARTING TIME & ENDING TIME*@
-    <MudPaper Elevation="5" Class="pa-4 my-4">
-        @* STARTING TIME *@
-        <MudText Typo="Typo.h6">Times</MudText>
-        
-        <MudItem>
-            <MudTimePicker Adornment="Adornment.Start" Label="Starting Time" PickerVariant="PickerVariant.Dialog" @bind-Time="ViewModel.StartingTime" />
-        </MudItem>
-        <br />
+     @*STARTING TIME & ENDING TIME*@
+     <MudPaper Elevation="5" Class="pa-4 my-4">
+         @* STARTING TIME *@
+         <MudText Typo="Typo.h6">Times</MudText>
 
-        @* ENDING TIME *@
-        <MudItem>
-            <MudTimePicker Adornment="Adornment.Start" Label="Ending Time" PickerVariant="PickerVariant.Dialog" @bind-Time="ViewModel.EndingTime" />
-        </MudItem>
-    </MudPaper>
+         <MudItem>
+             <MudTimePicker
+                 Adornment="Adornment.Start"
+                 Label="Starting Time"
+                 PickerVariant="PickerVariant.Dialog"
+                 @bind-Time="ViewModel.Timesheet.Workdays[ViewModel.ActiveDayIndex].StartTime"/>
+         </MudItem>
+         <br />
 
-    @*TASKS*@
-    <MudPaper Elevation="5" Class="pa-4 my-4">
-        <MudText Typo="Typo.h6">Tasks</MudText>
+         @* ENDING TIME *@
+         <MudItem>
+             <MudTimePicker
+                 Adornment="Adornment.Start"
+                 Label="Ending Time"
+                 PickerVariant="PickerVariant.Dialog"
+                 @bind-Time="ViewModel.Timesheet.Workdays[ViewModel.ActiveDayIndex].EndTime" />
+         </MudItem>
+     </MudPaper>
 
-        @if (ViewModel.GroupedTasks is null)
+     @*TASKS*@
+     <MudPaper Elevation="5" Class="pa-4 my-4">
+         <MudText Typo="Typo.h6">Tasks</MudText>
+
+         @if (ViewModel.GroupedTasks is null)
         {
             <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
         }
         else
         {
-            <MudTreeView MultiSelection="true" @bind-SelectedValues="ViewModel.SelectedTasks">
+            <MudTreeView MultiSelection="true" @bind-SelectedValues="@ViewModel.Timesheet.Workdays[ViewModel.ActiveDayIndex].SelectedTasks">
                 @foreach (var taskGroup in ViewModel.GroupedTasks)
                 {
                     <MudTreeViewItem Value="@taskGroup.TaskGroupName">
@@ -112,17 +125,17 @@
             </MudTreeView>
 
 
-            @if (ViewModel.SelectedTasks?.Count > 0)
+            @if (@ViewModel.Timesheet.Workdays[ViewModel.ActiveDayIndex].SelectedTasks?.Count > 0)
             {
-                @foreach (var task in ViewModel.SelectedTasks)
+                @foreach (var task in ViewModel.Timesheet.Workdays[ViewModel.ActiveDayIndex].SelectedTasks)
                 {
                     <MudChip Color="Color.Primary"><MudIcon Icon="@Icons.Material.Filled.TaskAlt" Size="Size.Medium" Style="padding-right: 10px;" />@task</MudChip>
                 }
-                <MudText><strong>@ViewModel.SelectedTasks.Count tasks selected.</strong></MudText>
+                <MudText><strong>@ViewModel.Timesheet.Workdays[ViewModel.ActiveDayIndex].SelectedTasks.Count tasks selected.</strong></MudText>
             }
             else
             {
-                <MudText><strong>No tasks selected.</strong></MudText>
+                <MudText><strong>No tasks selected for @ViewModel.Timesheet.Workdays[ViewModel.ActiveDayIndex].WeekDay</strong></MudText>
             }
         }
     </MudPaper>
@@ -130,7 +143,7 @@
     @*COMMENTS*@
     <MudPaper Elevation="5" Class="pa-4 my-4">
         <MudText Typo="Typo.h6">Comments</MudText>
-        <MudTextField Value="ViewModel.Comments" T="string" Variant="Variant.Outlined" Text="200.- for diesel" Lines="5" />
+        <MudTextField Value="@ViewModel.Timesheet.Workdays[ViewModel.ActiveDayIndex].WorkdayComments" T="string" Variant="Variant.Outlined" Text="@ViewModel.Timesheet.Workdays[ViewModel.ActiveDayIndex].WorkdayComments" Lines="5" />
     </MudPaper>
 
     @*SUBMIT*@
