@@ -48,8 +48,6 @@ public class IndexViewModel
 
     public async void GetTimesheetPrevWeek()
     {
-        var bp = "";
-        //Timesheet = await _timesheetsService.GetTimesheetForWeekNumber(User.UserId, Timesheet.weekNumber - 1);
         Timesheet = await _timesheetsService.GetTimesheetForWeekNumber(Timesheet.WeekNumber - 1, User.UserId);
     }
 

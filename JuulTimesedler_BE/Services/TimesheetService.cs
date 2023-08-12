@@ -1,6 +1,7 @@
 ﻿using SharedModels.Models;
 using JuulTimesedler_BE.Interfaces;
 using SharedModels.Enums;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace JuulTimesedler_BE.Services;
 
@@ -40,10 +41,29 @@ public class TimesheetService : ITimesheetService
         int weekNumber = _timeService.GetCurrentWeekNumber();
         Timesheet currentTimesheetWeek = new();
         currentTimesheetWeek.WeekNumber = weekNumber;
-
         currentTimesheetWeek.WeekDays = Enum.GetValues(typeof(WeekDays)).Cast<WeekDays>().ToList();
-
         currentTimesheetWeek.WeekDates = _timeService.GetCurrentWeekDates(weekNumber);
+        currentTimesheetWeek.Workdays = new List<Workday>();
+
+        //DEMO WORKDAYS
+        currentTimesheetWeek.Workdays.Add(
+            new Workday
+            {
+                WeekDay = WeekDays.Monday,
+                WeekDate = 7,
+                SelectedProjectId = 1113,
+                WorkdayComments = "test 1"
+            }
+        );
+        currentTimesheetWeek.Workdays.Add(
+            new Workday
+            {
+                WeekDay = WeekDays.Tuesday,
+                WeekDate = 8,
+                SelectedProjectId = 1113,
+                WorkdayComments = "test 2"
+            }
+        );
 
         return currentTimesheetWeek;
     }
