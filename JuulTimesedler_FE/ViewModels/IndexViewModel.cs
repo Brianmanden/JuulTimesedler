@@ -109,10 +109,85 @@ public class IndexViewModel
 
     public async Task Initialize()
     {
-        User = await _userService.GetUser();
-        Projects = await _projectsService.GetProjects();
-        GroupedTasks = await _tasksService.GetTasks();
-        Timesheet = await _timesheetsService.GetCurrentTimesheetWeek(User.UserId);
-    }
+        using var cts = new CancellationTokenSource();
+        CancellationToken token = cts.Token;
 
+        var GetUserTask = Task.Run(
+            async () =>
+            {
+                User = await _userService.GetUser();
+            }, token);
+
+        _ = GetUserTask.ContinueWith(
+            antecedent =>
+            {
+                if (antecedent.Status == TaskStatus.RanToCompletion)
+                {
+                    Console.WriteLine("Fetched User.");
+                }
+                else if (antecedent.Status == TaskStatus.Faulted)
+                {
+                    Console.WriteLine($"USER: { antecedent.Exception!.GetBaseException().Message }");
+                }
+            }
+        );
+
+        var GetProjectsTask = Task.Run(
+            async () =>
+            {
+                Projects = await _projectsService.GetProjects();
+            }, token);
+
+        _ = GetProjectsTask.ContinueWith(
+            antecedent =>
+        {
+            if (antecedent.Status == TaskStatus.RanToCompletion)
+            {
+                Console.WriteLine("Fetched Projects.");
+            }
+            else if (antecedent.Status == TaskStatus.Faulted)
+            {
+                Console.WriteLine($"PROJECTS: { antecedent.Exception!.GetBaseException().Message }");
+            }
+        });
+
+        var GetGroupedTasks = Task.Run(
+            async () =>
+            {
+                GroupedTasks = await _tasksService.GetTasks();
+            }, token);
+
+        _ = GetGroupedTasks.ContinueWith(
+            antecedent => {
+                if (antecedent.Status == TaskStatus.RanToCompletion)
+                {
+                    Console.WriteLine("Fetched Grouped Tasks.");
+                }
+                else if(antecedent.Status == TaskStatus.Faulted)
+                {
+                    Console.WriteLine($"GROUPED TASKS: { antecedent.Exception!.GetBaseException().Message }");
+                }
+            }    
+        );
+
+        var GetTimesheetTask = Task.Run(
+            async () =>
+            {
+                Timesheet = await _timesheetsService.GetCurrentTimesheetWeek(User.UserId);
+            }, token);
+
+        _ = GetTimesheetTask.ContinueWith(
+            antecedent =>
+            {
+                if(antecedent.Status == TaskStatus.RanToCompletion)
+                {
+                    Console.WriteLine("Fetched Timesheet.");
+                }
+                else if (antecedent.Status == TaskStatus.Faulted)
+                {
+                    Console.WriteLine($"TIMESHEET: { antecedent.Exception!.GetBaseException().Message }");
+                }
+            }
+        );
+    }
 }
