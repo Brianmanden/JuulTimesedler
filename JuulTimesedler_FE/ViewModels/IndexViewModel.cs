@@ -1,7 +1,8 @@
-﻿using SharedModels.Enums;
-using SharedModels.Models;
+﻿using JuulTimesedler_FE.Services;
+
 using SharedModels.DTOs;
-using JuulTimesedler_FE.Services;
+using SharedModels.Enums;
+using SharedModels.Models;
 
 namespace JuulTimesedler_FE.ViewModels;
 
@@ -112,6 +113,7 @@ public class IndexViewModel
         using var cts = new CancellationTokenSource();
         CancellationToken token = cts.Token;
 
+        #region USER
         var GetUserTask = Task.Run(
             async () =>
             {
@@ -127,11 +129,13 @@ public class IndexViewModel
                 }
                 else if (antecedent.Status == TaskStatus.Faulted)
                 {
-                    Console.WriteLine($"USER: { antecedent.Exception!.GetBaseException().Message }");
+                    Console.WriteLine($"USER: {antecedent.Exception!.GetBaseException().Message}");
                 }
             }
         );
+        #endregion
 
+        #region PROJECTS 
         var GetProjectsTask = Task.Run(
             async () =>
             {
@@ -147,10 +151,12 @@ public class IndexViewModel
             }
             else if (antecedent.Status == TaskStatus.Faulted)
             {
-                Console.WriteLine($"PROJECTS: { antecedent.Exception!.GetBaseException().Message }");
+                Console.WriteLine($"PROJECTS: {antecedent.Exception!.GetBaseException().Message}");
             }
         });
+        #endregion
 
+        #region TASKS 
         var GetGroupedTasks = Task.Run(
             async () =>
             {
@@ -158,18 +164,21 @@ public class IndexViewModel
             }, token);
 
         _ = GetGroupedTasks.ContinueWith(
-            antecedent => {
+            antecedent =>
+            {
                 if (antecedent.Status == TaskStatus.RanToCompletion)
                 {
                     Console.WriteLine("Fetched Grouped Tasks.");
                 }
-                else if(antecedent.Status == TaskStatus.Faulted)
+                else if (antecedent.Status == TaskStatus.Faulted)
                 {
-                    Console.WriteLine($"GROUPED TASKS: { antecedent.Exception!.GetBaseException().Message }");
+                    Console.WriteLine($"GROUPED TASKS: {antecedent.Exception!.GetBaseException().Message}");
                 }
-            }    
+            }
         );
+        #endregion
 
+        #region TIMESHEET
         var GetTimesheetTask = Task.Run(
             async () =>
             {
@@ -179,15 +188,16 @@ public class IndexViewModel
         _ = GetTimesheetTask.ContinueWith(
             antecedent =>
             {
-                if(antecedent.Status == TaskStatus.RanToCompletion)
+                if (antecedent.Status == TaskStatus.RanToCompletion)
                 {
                     Console.WriteLine("Fetched Timesheet.");
                 }
                 else if (antecedent.Status == TaskStatus.Faulted)
                 {
-                    Console.WriteLine($"TIMESHEET: { antecedent.Exception!.GetBaseException().Message }");
+                    Console.WriteLine($"TIMESHEET: {antecedent.Exception!.GetBaseException().Message}");
                 }
             }
         );
+        #endregion
     }
 }
