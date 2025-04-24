@@ -14,19 +14,19 @@
 <MudPaper Elevation="5" Class="pa-4 my-4">
 	<MudText Typo="Typo.h5">User Profile</MudText>
 
-	@if (ViewModel.User is null)
-	{
-		<MudProgressCircular Color="Color.Primary" Indeterminate="true" />
-	}
-	else
+	@if (ViewModel.User != null)
 	{
 		<MudTextField T="int" Adornment="Adornment.Start" AdornmentText="Id: " AdornmentColor="Color.Primary" Value="@ViewModel.User.UserId" ReadOnly />
 		<MudTextField T="string" Adornment="Adornment.Start" AdornmentText="Name: " AdornmentColor="Color.Primary" Text="@ViewModel.User.UserName" ReadOnly />
 	}
+	else
+	{
+		<MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+	}
 </MudPaper>
 
 <!-- WEEKS & DAYS -->
-<MudPaper Elevation="5" Class="pa-4 my-4">
+@* <MudPaper Elevation="5" Class="pa-4 my-4">
 	<MudText Typo="Typo.h6">Weeks &amp; days</MudText>
 
 	@if (ViewModel.Timesheet is null)
@@ -60,11 +60,11 @@
 			}
 		</MudTabs>
 	}
-</MudPaper>
+</MudPaper> *@
 
 <MudForm>
 	<!-- PROJECTS -->
-	<MudPaper Elevation="5" Class="pa-4 my-4">
+@* 	<MudPaper Elevation="5" Class="pa-4 my-4">
 		<MudItem>
 			<MudText Typo="Typo.h6">Projects</MudText>
 
@@ -76,10 +76,10 @@
 							 SearchFunc="ViewModel.ChooseProject"
 							 T="GetProjectDTO" />
 		</MudItem>
-	</MudPaper>
+	</MudPaper> *@
 
 	<!-- STARTING TIME & ENDING TIME -->
-	<MudPaper Elevation="5" Class="pa-4 my-4">
+@* 	<MudPaper Elevation="5" Class="pa-4 my-4">
 		<!-- STARTING TIME -->
 		<MudText Typo="Typo.h6">Times</MudText>
 
@@ -98,10 +98,10 @@
 						   PickerVariant="PickerVariant.Dialog"
 						   @bind-Time="ViewModel.Timesheet.Workdays[ViewModel.ActiveDayIndex].EndTime" />
 		</MudItem>
-	</MudPaper>
+	</MudPaper> *@
 
 	<!-- TASKS -->
-	<MudPaper Elevation="5" Class="pa-4 my-4">
+@* 	<MudPaper Elevation="5" Class="pa-4 my-4">
 		<MudText Typo="Typo.h6">Tasks</MudText>
 
 		@if (ViewModel.GroupedTasks is null)
@@ -136,13 +136,13 @@
 				<MudText><strong>No tasks selected for @ViewModel.Timesheet.Workdays[ViewModel.ActiveDayIndex].WeekDay</strong></MudText>
 			}
 		}
-	</MudPaper>
+	</MudPaper> *@
 
 	<!-- COMMENTS -->
-	<MudPaper Elevation="5" Class="pa-4 my-4">
+@* 	<MudPaper Elevation="5" Class="pa-4 my-4">
 		<MudText Typo="Typo.h6">Comments</MudText>
 		<MudTextField Value="@ViewModel.Timesheet.Workdays[ViewModel.ActiveDayIndex].WorkdayComments" T="string" Variant="Variant.Outlined" Text="@ViewModel.Timesheet.Workdays[ViewModel.ActiveDayIndex].WorkdayComments" Lines="5" />
-	</MudPaper>
+	</MudPaper> *@
 
 	<!-- SUBMIT -->
 	<MudButton Class="mb-4" Color="Color.Primary" Variant="Variant.Filled" OnClick="ViewModel.SendForm">Send</MudButton>

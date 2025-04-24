@@ -40,11 +40,12 @@ public class IndexViewModel
 
     public async Task<IEnumerable<GetProjectDTO>> ChooseProject(string project)
     {
-        if (string.IsNullOrEmpty(project))
+        if (!string.IsNullOrEmpty(project))
         {
-            return Projects;
+            return Projects.Where(p => p.ProjectName.Contains(project, StringComparison.InvariantCultureIgnoreCase));
         }
-        return Projects.Where(p => p.ProjectName.Contains(project, StringComparison.InvariantCultureIgnoreCase));
+
+        return Projects;
     }
 
     public async void GetTimesheetPrevWeek()
@@ -136,68 +137,68 @@ public class IndexViewModel
         #endregion
 
         #region PROJECTS 
-        var GetProjectsTask = Task.Run(
-            async () =>
-            {
-                Projects = await _projectsService.GetProjects();
-            }, token);
+        //var GetProjectsTask = Task.Run(
+        //    async () =>
+        //    {
+        //        Projects = await _projectsService.GetProjects();
+        //    }, token);
 
-        _ = GetProjectsTask.ContinueWith(
-            antecedent =>
-        {
-            if (antecedent.Status == TaskStatus.RanToCompletion)
-            {
-                Console.WriteLine("Fetched Projects.");
-            }
-            else if (antecedent.Status == TaskStatus.Faulted)
-            {
-                Console.WriteLine($"PROJECTS: {antecedent.Exception!.GetBaseException().Message}");
-            }
-        });
+        //_ = GetProjectsTask.ContinueWith(
+        //    antecedent =>
+        //{
+        //    if (antecedent.Status == TaskStatus.RanToCompletion)
+        //    {
+        //        Console.WriteLine("Fetched Projects.");
+        //    }
+        //    else if (antecedent.Status == TaskStatus.Faulted)
+        //    {
+        //        Console.WriteLine($"PROJECTS: {antecedent.Exception!.GetBaseException().Message}");
+        //    }
+        //});
         #endregion
 
         #region TASKS 
-        var GetGroupedTasks = Task.Run(
-            async () =>
-            {
-                GroupedTasks = await _tasksService.GetTasks();
-            }, token);
+        //var GetGroupedTasks = Task.Run(
+        //    async () =>
+        //    {
+        //        GroupedTasks = await _tasksService.GetTasks();
+        //    }, token);
 
-        _ = GetGroupedTasks.ContinueWith(
-            antecedent =>
-            {
-                if (antecedent.Status == TaskStatus.RanToCompletion)
-                {
-                    Console.WriteLine("Fetched Grouped Tasks.");
-                }
-                else if (antecedent.Status == TaskStatus.Faulted)
-                {
-                    Console.WriteLine($"GROUPED TASKS: {antecedent.Exception!.GetBaseException().Message}");
-                }
-            }
-        );
+        //_ = GetGroupedTasks.ContinueWith(
+        //    antecedent =>
+        //    {
+        //        if (antecedent.Status == TaskStatus.RanToCompletion)
+        //        {
+        //            Console.WriteLine("Fetched Grouped Tasks.");
+        //        }
+        //        else if (antecedent.Status == TaskStatus.Faulted)
+        //        {
+        //            Console.WriteLine($"GROUPED TASKS: {antecedent.Exception!.GetBaseException().Message}");
+        //        }
+        //    }
+        //);
         #endregion
 
         #region TIMESHEET
-        var GetTimesheetTask = Task.Run(
-            async () =>
-            {
-                Timesheet = await _timesheetsService.GetCurrentTimesheetWeek(User.UserId);
-            }, token);
+        //var GetTimesheetTask = Task.Run(
+        //    async () =>
+        //    {
+        //        Timesheet = await _timesheetsService.GetCurrentTimesheetWeek(User.UserId);
+        //    }, token);
 
-        _ = GetTimesheetTask.ContinueWith(
-            antecedent =>
-            {
-                if (antecedent.Status == TaskStatus.RanToCompletion)
-                {
-                    Console.WriteLine("Fetched Timesheet.");
-                }
-                else if (antecedent.Status == TaskStatus.Faulted)
-                {
-                    Console.WriteLine($"TIMESHEET: {antecedent.Exception!.GetBaseException().Message}");
-                }
-            }
-        );
+        //_ = GetTimesheetTask.ContinueWith(
+        //    antecedent =>
+        //    {
+        //        if (antecedent.Status == TaskStatus.RanToCompletion)
+        //        {
+        //            Console.WriteLine("Fetched Timesheet.");
+        //        }
+        //        else if (antecedent.Status == TaskStatus.Faulted)
+        //        {
+        //            Console.WriteLine($"TIMESHEET: {antecedent.Exception!.GetBaseException().Message}");
+        //        }
+        //    }
+        //);
         #endregion
     }
 }

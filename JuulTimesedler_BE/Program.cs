@@ -1,67 +1,26 @@
-using Umbraco.Cms.Core.Composing;
-using Umbraco.Cms.Web.Common.ApplicationBuilder;
-using JuulTimesedler_BE.Interfaces;
-using JuulTimesedler_BE.Services;
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-namespace JuulTimesedler_BE;
+builder.CreateUmbracoBuilder()
+    .AddBackOffice()
+    .AddWebsite()
+    .AddComposers()
+    .Build();
 
-public class Program
-{
-    public static void Main(string[] args)
-        => CreateHostBuilder(args)
-            .Build()
-            .Run();
+WebApplication app = builder.Build();
 
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-            .ConfigureServices(
-                services =>
-                    services.AddScoped<IWorkersService, WorkersService>()
-                            .AddScoped<ITimeService, TimeService>()
-                            .AddScoped<ITimesheetService, TimesheetService>()
-                )
-            .ConfigureUmbracoDefaults()
-            .ConfigureWebHostDefaults(webBuilder =>
-            {
-                webBuilder.ConfigureServices(
-                    services => services.AddCors(
-                        options => options.AddPolicy(
-                            "MyCors", policy =>
-                                {
-                                    policy
-                                    .AllowAnyOrigin()
-                                    .AllowAnyHeader()
-                                    .AllowAnyMethod();
-                                }
-                        )
-                    )
-                );
-                webBuilder.UseStaticWebAssets();
-                webBuilder.UseStartup<Startup>();
-            });
-}
+await app.BootUmbracoAsync();
 
-#region CORS
-public class MyComposer : IComposer
-{
-    public void Compose(IUmbracoBuilder builder)
+
+app.UseUmbraco()
+    .WithMiddleware(u =>
     {
-        builder.Services.AddCors(options =>
-        {
-            options.AddDefaultPolicy(
-                x => x.AllowAnyOrigin()
-                         .AllowAnyHeader()
-                         .AllowAnyMethod()
-            );
-        });
+        u.UseBackOffice();
+        u.UseWebsite();
+    })
+    .WithEndpoints(u =>
+    {
+        u.UseBackOfficeEndpoints();
+        u.UseWebsiteEndpoints();
+    });
 
-        builder.Services.Configure<UmbracoPipelineOptions>(options =>
-        {
-            options.AddFilter(new UmbracoPipelineFilter(nameof(MyComposer))
-            {
-                PostPipeline = appBuilder => appBuilder.UseCors()
-            });
-        });
-    }
-}
-#endregion
+await app.RunAsync();
