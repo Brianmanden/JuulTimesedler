@@ -15,24 +15,28 @@ public class ProjectController : Controller
     }
         
     [HttpGet("api/projects/")]
-    public async Task<List<GetProjectDTO>> GetCurrentProjects()
-    {
-        IPublishedContent rootNode = _umbracoHelper.ContentAtRoot().FirstOrDefault();
-        IEnumerable<IPublishedContent> projects = rootNode.Children().DescendantsOrSelfOfType("project").ToList();
+	public async Task<List<GetProjectDTO>> GetCurrentProjects()
+	{
+		IPublishedContent? rootNode = await Task.Run(() => _umbracoHelper.ContentAtRoot().FirstOrDefault());
+		if (rootNode == null)
+		{
+			return new List<GetProjectDTO>();
+		}
 
-        List<GetProjectDTO> allProjectsList = new();
+		IEnumerable<IPublishedContent> projects = await Task.Run(() => rootNode.Children().DescendantsOrSelfOfType("project").ToList());
 
-        foreach (var project in projects)
-        {
-            allProjectsList.Add(new GetProjectDTO
-            {
-                //someProperty = project.Value("contactPerson / address / description / contactPerson")?.ToString()
-                ProjectId = project.Id,
-                ProjectName = project.Name,
-                ProjectFullName = project.Value("fullName")?.ToString(),
-            });
-        }
+		List<GetProjectDTO> allProjectsList = new();
 
-        return allProjectsList;
-    }
+		foreach (var project in projects)
+		{
+			allProjectsList.Add(new GetProjectDTO
+			{
+				ProjectId = project.Id,
+				ProjectName = project.Name,
+				ProjectFullName = project.Value("fullName")?.ToString(),
+			});
+		}
+
+		return allProjectsList;
+	}
 }

@@ -8,197 +8,166 @@ namespace JuulTimesedler_FE.ViewModels;
 
 public class IndexViewModel
 {
-    private UsersService _userService;
-    private ProjectsService _projectsService;
-    private TasksService _tasksService;
-    private TimesheetsService _timesheetsService;
+	private UsersService _userService;
+	private ProjectsService _projectsService;
+	private TasksService _tasksService;
+	private TimesheetsService _timesheetsService;
 
-    public User User { get; set; }
+	public User User { get; set; }
 
-    public int ActiveDayIndex = 0;
+	public int ActiveDayIndex = 0;
 
-    public GetProjectDTO[]? Projects;
-    public GetProjectDTO SelectedProject { get; set; }
-    public TasksGroupDTO[]? GroupedTasks;
-    public HashSet<string> SelectedTasks { get; set; }
-    public string? Comments { get; set; }
+	public GetProjectDTO[]? Projects;
+	public GetProjectDTO SelectedProject { get; set; }
+	public TasksGroupDTO[]? GroupedTasks;
+	public HashSet<string> SelectedTasks { get; set; }
+	public string? Comments { get; set; }
 
-    public string? TasksSearchText { get; set; }
-    public Timesheet Timesheet { get; set; }
-    public TimeSpan? StartingTime { get; set; } // = new TimeSpan(02, 35, 00);
-    public TimeSpan? EndingTime { get; set; } // = new TimeSpan(02, 35, 00);
+	public string? TasksSearchText { get; set; }
+	public Timesheet Timesheet { get; set; }
+	public TimeSpan? StartingTime { get; set; } // = new TimeSpan(02, 35, 00);
+	public TimeSpan? EndingTime { get; set; } // = new TimeSpan(02, 35, 00);
 
-    public IndexViewModel(UsersService usersService, ProjectsService projectsService, TasksService tasksService, TimesheetsService timesheetsService)
-    {
-        _userService = usersService;
-        _projectsService = projectsService;
-        _tasksService = tasksService;
-        _timesheetsService = timesheetsService;
-    }
+	public IndexViewModel(UsersService usersService, ProjectsService projectsService, TasksService tasksService, TimesheetsService timesheetsService)
+	{
+		_userService = usersService;
+		_projectsService = projectsService;
+		_tasksService = tasksService;
+		_timesheetsService = timesheetsService;
 
-    public async Task ClearProject() { SelectedProject = null; }
+		// Initialize non-nullable properties with default values
+		User = new User(){ UserId = 123, UserName = "John Doe"};
+		SelectedProject = new GetProjectDTO();
+		SelectedTasks = new HashSet<string>();
+		Timesheet = new Timesheet();
+	}
 
-    public async Task<IEnumerable<GetProjectDTO>> ChooseProject(string project)
-    {
-        if (!string.IsNullOrEmpty(project))
-        {
-            return Projects.Where(p => p.ProjectName.Contains(project, StringComparison.InvariantCultureIgnoreCase));
-        }
+	public async Task ClearProject() {
+		await Task.Run(() => SelectedProject = null!);
+	}
 
-        return Projects;
-    }
+	public async Task<IEnumerable<GetProjectDTO>> ChooseProject(string project)
+	{
+		if (!string.IsNullOrEmpty(project))
+		{
+			return await Task.Run(()=> Projects!.Where(p => p.ProjectName!.Contains(project, StringComparison.InvariantCultureIgnoreCase)));
+		}
 
-    public async void GetTimesheetPrevWeek()
-    {
-        int localPrevWeek = Timesheet.WeekNumber - 1;
-        Timesheet = await _timesheetsService.GetTimesheetForWeekNumber(localPrevWeek, User.UserId);
-    }
+		return Projects!;
+	}
 
-    public async void GetTimesheetNextWeek()
-    {
-        int localNextWeek = Timesheet.WeekNumber + 1;
-        Timesheet = await _timesheetsService.GetTimesheetForWeekNumber(localNextWeek, User.UserId);
-    }
+	public async void GetTimesheetPrevWeek()
+	{
+		int localPrevWeek = Timesheet.WeekNumber - 1;
+		Timesheet = await _timesheetsService.GetTimesheetForWeekNumber(localPrevWeek, User.UserId);
+	}
 
-    public async Task SendForm()
-    {
-        PutTimesheetDTO currentWeekTimesheet = new PutTimesheetDTO();
-        currentWeekTimesheet.WorkerId = User.UserId;
-        currentWeekTimesheet.WeekNumber = Timesheet.WeekNumber;
+	public async void GetTimesheetNextWeek()
+	{
+		int localNextWeek = Timesheet.WeekNumber + 1;
+		Timesheet = await _timesheetsService.GetTimesheetForWeekNumber(localNextWeek, User.UserId);
+	}
 
-        List<Workday> workDays = new List<Workday>
-        {
-            new Workday
-            {
-                SelectedProjectId = SelectedProject?.ProjectId ?? null,
-                StartTime = StartingTime ?? new TimeSpan(),
-                EndTime = EndingTime ?? new TimeSpan(),
-                WorkdayComments = Comments,
-                SelectedTasks = SelectedTasks,
-                WeekDay = WeekDays.Wednesday,
-                WeekDate = 9,
-            },
-            new Workday
-            {
-                SelectedProjectId = SelectedProject?.ProjectId ?? null,
-                StartTime = StartingTime ?? new TimeSpan(),
-                EndTime = EndingTime ?? new TimeSpan(),
-                WorkdayComments = Comments,
-                SelectedTasks = SelectedTasks,
-                WeekDay = WeekDays.Thursday,
-                WeekDate = 10,
-            },
-        };
+	public async Task SendForm()
+	{
+		PutTimesheetDTO currentWeekTimesheet = new PutTimesheetDTO();
+		currentWeekTimesheet.WorkerId = User.UserId;
+		currentWeekTimesheet.WeekNumber = Timesheet.WeekNumber;
 
-        foreach (Workday workday in Timesheet.Workdays)
-        {
-            workDays.Add(workday);
-        }
+		List<Workday> workDays = new List<Workday>
+		{
+			new Workday
+			{
+				SelectedProjectId = SelectedProject?.ProjectId ?? null,
+				StartTime = StartingTime ?? new TimeSpan(),
+				EndTime = EndingTime ?? new TimeSpan(),
+				WorkdayComments = Comments,
+				SelectedTasks = SelectedTasks,
+				WeekDay = WeekDays.Wednesday,
+				WeekDate = 9,
+			},
+			new Workday
+			{
+				SelectedProjectId = SelectedProject?.ProjectId ?? null,
+				StartTime = StartingTime ?? new TimeSpan(),
+				EndTime = EndingTime ?? new TimeSpan(),
+				WorkdayComments = Comments,
+				SelectedTasks = SelectedTasks,
+				WeekDay = WeekDays.Thursday,
+				WeekDate = 10,
+			},
+		};
 
-        currentWeekTimesheet.Workdays = workDays;
+		foreach (Workday workday in Timesheet.Workdays)
+		{
+			workDays.Add(workday);
+		}
 
-        await _timesheetsService.PutCurrentTimesheetWeek(currentWeekTimesheet);
-    }
+		currentWeekTimesheet.Workdays = workDays;
 
-    public string FormattedWeekDate(int i)
-    {
-        string shortFormattedWeekdate = $"{Timesheet.WeekDays[i].ToString().Substring(0, 3)}-{Timesheet.WeekDates[i]}.";
-        string fullFormattedWeekdate = $"{Timesheet.WeekDays[i]} - {Timesheet.WeekDates[i]}";
+		await _timesheetsService.PutCurrentTimesheetWeek(currentWeekTimesheet);
+	}
 
-        return shortFormattedWeekdate;
-        //return fullFormattedWeekdate;
-    }
+	public string FormattedWeekDate(int i)
+	{
+		string shortFormattedWeekdate = $"{Timesheet.WeekDays[i].ToString().Substring(0, 3)}-{Timesheet.WeekDates[i]}.";
+		string fullFormattedWeekdate = $"{Timesheet.WeekDays[i]} - {Timesheet.WeekDates[i]}";
 
-    public async Task Initialize()
-    {
-        using var cts = new CancellationTokenSource();
-        CancellationToken token = cts.Token;
+		return shortFormattedWeekdate;
+		//return fullFormattedWeekdate;
+	}
 
-        #region USER
-        var GetUserTask = Task.Run(
-            async () =>
-            {
-                User = await _userService.GetUser();
-            }, token);
+	public async Task Initialize()
+	{
+		using var cts = new CancellationTokenSource();
+		CancellationToken token = cts.Token;
 
-        _ = GetUserTask.ContinueWith(
-            antecedent =>
-            {
-                if (antecedent.Status == TaskStatus.RanToCompletion)
-                {
-                    Console.WriteLine("Fetched User.");
-                }
-                else if (antecedent.Status == TaskStatus.Faulted)
-                {
-                    Console.WriteLine($"USER: {antecedent.Exception!.GetBaseException().Message}");
-                }
-            }
-        );
-        #endregion
+		#region USER
+		try
+		{
+			User = await _userService.GetUser();
+			Console.WriteLine("Fetched User.");
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"USER: {ex.GetBaseException().Message}");
+		}
+		#endregion
 
-        #region PROJECTS 
-        //var GetProjectsTask = Task.Run(
-        //    async () =>
-        //    {
-        //        Projects = await _projectsService.GetProjects();
-        //    }, token);
+		#region PROJECTS 
+		try
+		{
+			Projects = await _projectsService.GetProjects();
+			Console.WriteLine("Fetched Projects.");
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"PROJECTS: {ex.GetBaseException().Message}");
+		}
+		#endregion
 
-        //_ = GetProjectsTask.ContinueWith(
-        //    antecedent =>
-        //{
-        //    if (antecedent.Status == TaskStatus.RanToCompletion)
-        //    {
-        //        Console.WriteLine("Fetched Projects.");
-        //    }
-        //    else if (antecedent.Status == TaskStatus.Faulted)
-        //    {
-        //        Console.WriteLine($"PROJECTS: {antecedent.Exception!.GetBaseException().Message}");
-        //    }
-        //});
-        #endregion
+		#region TASKS
+		try
+		{
+			GroupedTasks = await _tasksService.GetTasks();
+			Console.WriteLine("Fetched Grouped Tasks.");
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"GROUPED TASKS: {ex.GetBaseException().Message}");
+		}
+		#endregion
 
-        #region TASKS 
-        //var GetGroupedTasks = Task.Run(
-        //    async () =>
-        //    {
-        //        GroupedTasks = await _tasksService.GetTasks();
-        //    }, token);
-
-        //_ = GetGroupedTasks.ContinueWith(
-        //    antecedent =>
-        //    {
-        //        if (antecedent.Status == TaskStatus.RanToCompletion)
-        //        {
-        //            Console.WriteLine("Fetched Grouped Tasks.");
-        //        }
-        //        else if (antecedent.Status == TaskStatus.Faulted)
-        //        {
-        //            Console.WriteLine($"GROUPED TASKS: {antecedent.Exception!.GetBaseException().Message}");
-        //        }
-        //    }
-        //);
-        #endregion
-
-        #region TIMESHEET
-        //var GetTimesheetTask = Task.Run(
-        //    async () =>
-        //    {
-        //        Timesheet = await _timesheetsService.GetCurrentTimesheetWeek(User.UserId);
-        //    }, token);
-
-        //_ = GetTimesheetTask.ContinueWith(
-        //    antecedent =>
-        //    {
-        //        if (antecedent.Status == TaskStatus.RanToCompletion)
-        //        {
-        //            Console.WriteLine("Fetched Timesheet.");
-        //        }
-        //        else if (antecedent.Status == TaskStatus.Faulted)
-        //        {
-        //            Console.WriteLine($"TIMESHEET: {antecedent.Exception!.GetBaseException().Message}");
-        //        }
-        //    }
-        //);
-        #endregion
-    }
+		#region TIMESHEET
+		try
+		{
+			Timesheet = await _timesheetsService.GetCurrentTimesheetWeek(User.UserId);
+			Console.WriteLine("Fetched Timesheet.");
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"TIMESHEET: {ex.GetBaseException().Message}");
+		}
+		#endregion
+	}
 }

@@ -9,45 +9,55 @@ namespace JuulTimesedler_BE.Controllers;
 
 public class TimesheetController : Controller
 {
-    private IContentService _contentService;
-    private ITimesheetService _timesheetService;
-    private ITimeService _timeService;
+	private IContentService _contentService;
+	private ITimesheetService _timesheetService;
+	private ITimeService _timeService;
 
-    public TimesheetController(IContentService _contentService, ITimesheetService timesheetService, ITimeService timeService)
-    {
-        this._contentService = _contentService;
-        _timesheetService = timesheetService;
-        _timeService = timeService;
-    }
+	public TimesheetController(IContentService _contentService, ITimesheetService timesheetService, ITimeService timeService)
+	{
+		this._contentService = _contentService;
+		_timesheetService = timesheetService;
+		_timeService = timeService;
+	}
 
-    [HttpGet("api/gettimesheetcurrentweek/{WorkerId}")]
-    public async Task<Timesheet> GetCurrentTimesheetWeek(int WorkerId)
-    {
-        Timesheet timesheetWeek = _timesheetService.GetTimesheetForCurrentWeek(WorkerId);
-        return timesheetWeek;
-    }
+	[HttpGet("api/gettimesheetcurrentweek/{WorkerId}")]
+	public async Task<Timesheet> GetCurrentTimesheetWeek(int WorkerId)
+	{
+		Timesheet timesheetWeek = await Task.Run(() => _timesheetService.GetTimesheetForCurrentWeek(WorkerId));
+		if (timesheetWeek is null)
+		{
+			return new Timesheet();
+		}
 
-    [HttpGet("api/gettimesheetforweek/{WeekNumber}/{WorkerId}")]
-    public async Task<Timesheet> GetTimesheetByWeekNumber(int WeekNumber, int WorkerId)
-    {
-        Timesheet timesheet = _timesheetService.GetTimesheetByWeekNumber(WeekNumber, WorkerId);
-        return timesheet;
-    }
+		return timesheetWeek;
+	}
 
-    [HttpPut("api/puttimesheetweek")]
-    public async Task<PutTimesheetDTO> PutTimesheet([FromBody] PutTimesheetDTO weekTimesheet)
-    {
-        TimeService timeService = new();
-        string formattedYearAndWeek = timeService.FormattedCurrentYearAndWeek();
+	[HttpGet("api/gettimesheetforweek/{WeekNumber}/{WorkerId}")]
+	public async Task<Timesheet> GetTimesheetByWeekNumber(int WeekNumber, int WorkerId)
+	{
+		Timesheet timesheet = await Task.Run(() => _timesheetService.GetTimesheetByWeekNumber(WeekNumber, WorkerId));
+		if (timesheet is null)
+		{
+			return new Timesheet();
+		}
 
-        // TODO BJA - Check for workdays, maybe refactor into service ?
+		return timesheet;
+	}
 
-        //var currentProject = _contentService.GetById(timesheet.SelectedProjectId);
-        ////currentProject.SetValue("fullName", "new fullname value");
-        //currentProject.SetValue("fullName", formattedYearAndWeek + " - new fullname value");
-        //currentProject.SetValue("address", "new address value");
+	[HttpPut("api/puttimesheetweek")]
+	public async Task<PutTimesheetDTO> PutTimesheet([FromBody] PutTimesheetDTO weekTimesheet)
+	{
+		TimeService timeService = new();
+		string formattedYearAndWeek = await Task.Run(() => timeService.FormattedCurrentYearAndWeek());
 
-        //_contentService.SaveAndPublish(currentProject);
-        return weekTimesheet;
-    }
+		// TODO BJA - Check for workdays, maybe refactor into service ?
+
+		//var currentProject = _contentService.GetById(timesheet.SelectedProjectId);
+		////currentProject.SetValue("fullName", "new fullname value");
+		//currentProject.SetValue("fullName", formattedYearAndWeek + " - new fullname value");
+		//currentProject.SetValue("address", "new address value");
+
+		//_contentService.SaveAndPublish(currentProject);
+		return weekTimesheet;
+	}
 }

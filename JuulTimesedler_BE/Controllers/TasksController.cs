@@ -22,8 +22,14 @@ public class TasksController : Controller
     {
         List<TasksGroupDTO> groupedTasks = new List<TasksGroupDTO>();
 
-        IPublishedContent rootNode = _umbracoHelper.ContentAtRoot().DescendantsOrSelfOfType("tasks").FirstOrDefault();
-        IList<IPublishedContent> tasksGroup = rootNode.Children().DescendantsOrSelfOfType("tasksGroup").ToList();
+        IPublishedContent? rootNode = await Task.Run(() => _umbracoHelper.ContentAtRoot().DescendantsOrSelfOfType("tasks").FirstOrDefault());
+        if (rootNode == null)
+        {
+            return new List<TasksGroupDTO>();
+        }
+
+
+        IList<IPublishedContent> tasksGroup = await Task.Run(() => rootNode.Children().DescendantsOrSelfOfType("tasksGroup").ToList());
 
         if (tasksGroup.Count < 1) {
             return groupedTasks;
