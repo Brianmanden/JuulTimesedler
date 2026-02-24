@@ -7,7 +7,7 @@ namespace JuulTimesedler_FE.Services;
 public class TimesheetsService
 {
     private HttpClient _http;
-    private const string _baseUri = "https://localhost:44388/api";
+    private const string _baseUri = "https://localhost:44371/api";
     private const string _getTimesheetCurrentWeekEndpoint = _baseUri + "/gettimesheetcurrentweek";
     private const string _getTimesheetForWeekEndpoint = _baseUri + "/gettimesheetforweek";
     private const string _putTimesheetsEndpoint = _baseUri + "/puttimesheetweek";

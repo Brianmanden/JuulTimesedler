@@ -17,7 +17,7 @@ public class TasksController : Controller
         _contentService = contentService;
     }
 
-    [HttpGet("api/tasks/")]
+    [HttpGet("api/tasks")]
     public async Task<List<TasksGroupDTO>> GetAllTasks()
     {
         List<TasksGroupDTO> groupedTasks = new List<TasksGroupDTO>();

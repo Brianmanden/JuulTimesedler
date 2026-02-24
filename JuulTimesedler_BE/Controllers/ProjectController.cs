@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Web.Common;
 using SharedModels.DTOs;
 
 namespace JuulTimesedler_BE.Controllers;
 
+[EnableCors("AllowAll")]
 public class ProjectController : Controller
 {
     private readonly UmbracoHelper _umbracoHelper;
@@ -14,7 +16,7 @@ public class ProjectController : Controller
         _umbracoHelper = umbracoHelper;
     }
         
-    [HttpGet("api/projects/")]
+    [HttpGet("api/projects")]
 	public async Task<List<GetProjectDTO>> GetCurrentProjects()
 	{
 		IPublishedContent? rootNode = await Task.Run(() => _umbracoHelper.ContentAtRoot().FirstOrDefault());

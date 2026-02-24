@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Core.Services;
 using SharedModels.Models;
 using SharedModels.DTOs;
@@ -7,6 +8,7 @@ using JuulTimesedler_BE.Services;
 
 namespace JuulTimesedler_BE.Controllers;
 
+[EnableCors("AllowAll")]
 public class TimesheetController : Controller
 {
 	private IContentService _contentService;

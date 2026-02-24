@@ -74,8 +74,8 @@ public class IndexViewModel
 		currentWeekTimesheet.WorkerId = User.UserId;
 		currentWeekTimesheet.WeekNumber = Timesheet.WeekNumber;
 
-		List<Workday> workDays = new List<Workday>
-		{
+		List<Workday> workDays = new List<Workday>();
+		/*{
 			new Workday
 			{
 				SelectedProjectId = SelectedProject?.ProjectId ?? null,
@@ -101,7 +101,7 @@ public class IndexViewModel
 		foreach (Workday workday in Timesheet.Workdays)
 		{
 			workDays.Add(workday);
-		}
+		}*/
 
 		currentWeekTimesheet.Workdays = workDays;
 

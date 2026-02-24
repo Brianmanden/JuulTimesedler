@@ -1,0 +1,56 @@
+@page "/demo"
+@inject HttpClient Http
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-5">
+    <MudPaper Elevation="5" Class="pa-4">
+        <MudText Typo="Typo.h4" GutterBottom="true">Demo Page</MudText>
+        <MudDivider Class="my-4" />
+
+        @if (data == null)
+        {
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+            <MudText Class="mt-2">Fetching data from backend...</MudText>
+        }
+        else
+        {
+            <MudAlert Severity="Severity.Success" Variant="Variant.Filled" Class="mb-4">
+                @data.Message
+            </MudAlert>
+
+            <MudField Label="Server Time" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AccessTime">
+                @data.ServerTime
+            </MudField>
+
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-4" OnClick="FetchData">Refresh</MudButton>
+        }
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private DemoData? data;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchData();
+    }
+
+    private async Task FetchData()
+    {
+        data = null;
+        try
+        {
+            data = await Http.GetFromJsonAsync<DemoData>("https://localhost:44371/api/demo");
+        }
+        catch (Exception ex)
+        {
+            // Handle error or display a message
+            Console.WriteLine($"Error fetching data: {ex.Message}");
+        }
+    }
+
+    public class DemoData
+    {
+        public string? Message { get; set; }
+        public string? ServerTime { get; set; }
+    }
+}
