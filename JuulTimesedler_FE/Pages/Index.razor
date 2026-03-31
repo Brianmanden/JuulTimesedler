@@ -87,22 +87,20 @@
         <!-- STARTING TIME & ENDING TIME -->
         <MudPaper Elevation="5" Class="pa-4 my-4">
             <MudText Typo="Typo.h6">Times</MudText>
-
-            <MudItem>
-                <MudTimePicker Adornment="Adornment.Start"
-                               Label="Starting Time"
-                               PickerVariant="PickerVariant.Dialog"
-                               @bind-Time="currentWorkday.StartTime" />
-            </MudItem>
-            <br />
-
-            <!-- ENDING TIME -->
-            <MudItem>
-                <MudTimePicker Adornment="Adornment.Start"
-                               Label="Ending Time"
-                               PickerVariant="PickerVariant.Dialog"
-                               @bind-Time="currentWorkday.EndTime" />
-            </MudItem>
+            <MudGrid Spacing="2">
+                <MudItem xs="6">
+                    <MudTimePicker Adornment="Adornment.Start"
+                                   Label="Starting"
+                                   PickerVariant="PickerVariant.Dialog"
+                                   @bind-Time="currentWorkday.StartTime" />
+                </MudItem>
+                <MudItem xs="6">
+                    <MudTimePicker Adornment="Adornment.Start"
+                                   Label="Ending"
+                                   PickerVariant="PickerVariant.Dialog"
+                                   @bind-Time="currentWorkday.EndTime" />
+                </MudItem>
+            </MudGrid>
         </MudPaper>
 
         <!-- TASKS -->
