@@ -16,6 +16,6 @@ public class TasksService
 
     public async Task<TasksGroupDTO[]> GetTasks()
     {
-        return await _http.GetFromJsonAsync<TasksGroupDTO[]>(_tasksEndpoint);
+        return await _http.GetFromJsonAsync<TasksGroupDTO[]>(_tasksEndpoint) ?? Array.Empty<TasksGroupDTO>();
     }
 }

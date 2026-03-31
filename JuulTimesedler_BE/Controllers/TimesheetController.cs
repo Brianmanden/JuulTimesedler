@@ -49,8 +49,7 @@ public class TimesheetController : Controller
 	[HttpPut("api/puttimesheetweek")]
 	public async Task<PutTimesheetDTO> PutTimesheet([FromBody] PutTimesheetDTO weekTimesheet)
 	{
-		TimeService timeService = new();
-		string formattedYearAndWeek = await Task.Run(() => timeService.FormattedCurrentYearAndWeek());
+		string formattedYearAndWeek = await Task.Run(() => _timeService.FormattedCurrentYearAndWeek(null));
 
 		// TODO BJA - Check for workdays, maybe refactor into service ?
 

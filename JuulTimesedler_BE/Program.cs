@@ -1,3 +1,6 @@
+using JuulTimesedler_BE.Interfaces;
+using JuulTimesedler_BE.Services;
+
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options =>
@@ -9,6 +12,10 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader();
     });
 });
+
+builder.Services.AddScoped<ITimeService, TimeService>();
+builder.Services.AddScoped<ITimesheetService, TimesheetService>();
+builder.Services.AddScoped<IWorkersService, WorkersService>();
 
 builder.CreateUmbracoBuilder()
     .AddBackOffice()

@@ -20,13 +20,16 @@ public class IndexViewModel
 	public GetProjectDTO[]? Projects;
 	public GetProjectDTO SelectedProject { get; set; }
 	public TasksGroupDTO[]? GroupedTasks;
-	public HashSet<string> SelectedTasks { get; set; }
+	public IReadOnlyCollection<string> SelectedTasks { get; set; }
 	public string? Comments { get; set; }
 
 	public string? TasksSearchText { get; set; }
 	public Timesheet Timesheet { get; set; }
 	public TimeSpan? StartingTime { get; set; } // = new TimeSpan(02, 35, 00);
 	public TimeSpan? EndingTime { get; set; } // = new TimeSpan(02, 35, 00);
+
+	public bool IsLoading { get; set; }
+	public string? SubmitStatus { get; set; }
 
 	public IndexViewModel(UsersService usersService, ProjectsService projectsService, TasksService tasksService, TimesheetsService timesheetsService)
 	{
@@ -39,21 +42,28 @@ public class IndexViewModel
 		User = new User(){ UserId = 123, UserName = "John Doe"};
 		SelectedProject = new GetProjectDTO();
 		SelectedTasks = new HashSet<string>();
-		Timesheet = new Timesheet();
+		Timesheet = new Timesheet 
+		{ 
+			WeekDays = new List<WeekDays>(), 
+			WeekDates = new int[0], 
+			Workdays = new List<Workday>() 
+		};
 	}
 
 	public async Task ClearProject() {
 		await Task.Run(() => SelectedProject = null!);
 	}
 
-	public async Task<IEnumerable<GetProjectDTO>> ChooseProject(string project)
+	public async Task<IEnumerable<GetProjectDTO>> ChooseProject(string project, CancellationToken token = default)
 	{
+		if (Projects == null) return Enumerable.Empty<GetProjectDTO>();
+
 		if (!string.IsNullOrEmpty(project))
 		{
-			return await Task.Run(()=> Projects!.Where(p => p.ProjectName!.Contains(project, StringComparison.InvariantCultureIgnoreCase)));
+			return await Task.Run(()=> Projects.Where(p => p.ProjectName != null && p.ProjectName.Contains(project, StringComparison.InvariantCultureIgnoreCase)), token);
 		}
 
-		return Projects!;
+		return Projects;
 	}
 
 	public async void GetTimesheetPrevWeek()
@@ -70,42 +80,26 @@ public class IndexViewModel
 
 	public async Task SendForm()
 	{
-		PutTimesheetDTO currentWeekTimesheet = new PutTimesheetDTO();
-		currentWeekTimesheet.WorkerId = User.UserId;
-		currentWeekTimesheet.WeekNumber = Timesheet.WeekNumber;
-
-		List<Workday> workDays = new List<Workday>();
-		/*{
-			new Workday
-			{
-				SelectedProjectId = SelectedProject?.ProjectId ?? null,
-				StartTime = StartingTime ?? new TimeSpan(),
-				EndTime = EndingTime ?? new TimeSpan(),
-				WorkdayComments = Comments,
-				SelectedTasks = SelectedTasks,
-				WeekDay = WeekDays.Wednesday,
-				WeekDate = 9,
-			},
-			new Workday
-			{
-				SelectedProjectId = SelectedProject?.ProjectId ?? null,
-				StartTime = StartingTime ?? new TimeSpan(),
-				EndTime = EndingTime ?? new TimeSpan(),
-				WorkdayComments = Comments,
-				SelectedTasks = SelectedTasks,
-				WeekDay = WeekDays.Thursday,
-				WeekDate = 10,
-			},
-		};
-
-		foreach (Workday workday in Timesheet.Workdays)
+		IsLoading = true;
+		SubmitStatus = "Sending...";
+		try
 		{
-			workDays.Add(workday);
-		}*/
+			PutTimesheetDTO currentWeekTimesheet = new PutTimesheetDTO();
+			currentWeekTimesheet.WorkerId = User.UserId;
+			currentWeekTimesheet.WeekNumber = Timesheet.WeekNumber;
+			currentWeekTimesheet.Workdays = Timesheet.Workdays;
 
-		currentWeekTimesheet.Workdays = workDays;
-
-		await _timesheetsService.PutCurrentTimesheetWeek(currentWeekTimesheet);
+			await _timesheetsService.PutCurrentTimesheetWeek(currentWeekTimesheet);
+			SubmitStatus = "Success!";
+		}
+		catch (Exception ex)
+		{
+			SubmitStatus = $"Error: {ex.Message}";
+		}
+		finally
+		{
+			IsLoading = false;
+		}
 	}
 
 	public string FormattedWeekDate(int i)

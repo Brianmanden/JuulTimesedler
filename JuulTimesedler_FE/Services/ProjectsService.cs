@@ -16,6 +16,6 @@ public class ProjectsService
 
     public async Task<GetProjectDTO[]> GetProjects()
     {
-        return await _http.GetFromJsonAsync<GetProjectDTO[]>(_projectsEndpoint);
+        return await _http.GetFromJsonAsync<GetProjectDTO[]>(_projectsEndpoint) ?? Array.Empty<GetProjectDTO>();
     }
 }

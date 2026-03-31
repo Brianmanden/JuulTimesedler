@@ -19,17 +19,17 @@ public class TimesheetsService
 
     public async Task<Timesheet> GetCurrentTimesheetWeek(int workerId)
     {
-        return await _http.GetFromJsonAsync<Timesheet>($"{_getTimesheetCurrentWeekEndpoint}/{workerId}");
+        return await _http.GetFromJsonAsync<Timesheet>($"{_getTimesheetCurrentWeekEndpoint}/{workerId}") ?? new Timesheet();
     }
 
     public async Task<Timesheet> GetTimesheetForWeekNumber(int weekNumber, int workerId)
     {
-        return await _http.GetFromJsonAsync<Timesheet>($"{_getTimesheetForWeekEndpoint}/{weekNumber}/{workerId}");
+        return await _http.GetFromJsonAsync<Timesheet>($"{_getTimesheetForWeekEndpoint}/{weekNumber}/{workerId}") ?? new Timesheet();
     }
 
     public async Task PutCurrentTimesheetWeek(PutTimesheetDTO timesheetCurrentWeek)
     {
-        CancellationToken cancellationToken = CancellationToken.None;
-        await _http.PutAsJsonAsync(_putTimesheetsEndpoint, timesheetCurrentWeek, cancellationToken);
+        var response = await _http.PutAsJsonAsync(_putTimesheetsEndpoint, timesheetCurrentWeek);
+        response.EnsureSuccessStatusCode();
     }
 }

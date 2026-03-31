@@ -6,6 +6,7 @@ public static class ProjectsExtensions
 {
     public static List<string> GetProjectNames(this GetProjectDTO[]? projects)
     {
-        return projects.Select(project => project.ProjectName).ToList();
+        if (projects == null) return new List<string>();
+        return projects.Select(project => project.ProjectName ?? string.Empty).ToList();
     }
 }

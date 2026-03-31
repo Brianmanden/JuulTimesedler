@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common;
@@ -6,6 +7,7 @@ using SharedModels.DTOs;
 
 namespace JuulTimesedler_BE.Controllers;
 
+[EnableCors("AllowAll")]
 public class TasksController : Controller
 {
     private readonly UmbracoHelper _umbracoHelper;
