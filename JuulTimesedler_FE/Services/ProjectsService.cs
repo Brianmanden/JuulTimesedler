@@ -6,8 +6,7 @@ namespace JuulTimesedler_FE.Services;
 public class ProjectsService
 {
     private HttpClient _http;
-    private const string _baseUri = "https://localhost:44371/api";
-    private const string _projectsEndpoint = _baseUri + "/projects";
+    private const string _projectsEndpoint = "api/projects";
 
     public ProjectsService(HttpClient http)
     {

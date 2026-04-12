@@ -38,13 +38,13 @@
 	{
 		<!-- GetTimesheetForWeekNumber -->
 		<MudAppBar Color="Color.Primary" Fixed="false">
-			<MudButton Title="Prev. Week" OnClick="ViewModel.GetTimesheetPrevWeek">
+			<MudButton OnClick="ViewModel.GetTimesheetPrevWeek">
 				<MudIcon Class="mud-theme-primary" Icon="@Icons.Material.Filled.ChevronLeft" />
 			</MudButton>
 			<MudSpacer />
 			<MudText Typo="Typo.h5">Week # @ViewModel.Timesheet.WeekNumber</MudText>
 			<MudSpacer />
-			<MudButton Title="Next Week" OnClick="ViewModel.GetTimesheetNextWeek">
+			<MudButton OnClick="ViewModel.GetTimesheetNextWeek">
 				<MudIcon Class="mud-theme-primary" Icon="@Icons.Material.Filled.ChevronRight" />
 			</MudButton>
 		</MudAppBar>
@@ -113,7 +113,7 @@
             }
             else
             {
-                <MudTreeView MultiSelection="true" @bind-SelectedValues="@currentWorkday.SelectedTasks">
+                <MudTreeView T="string" SelectionMode="SelectionMode.MultiSelection" @bind-SelectedValues="currentWorkday.SelectedTasks">
                     @foreach (var taskGroup in ViewModel.GroupedTasks)
                     {
                         <MudTreeViewItem Value="@taskGroup.TaskGroupName">
