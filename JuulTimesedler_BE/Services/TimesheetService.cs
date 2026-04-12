@@ -15,30 +15,18 @@ public class TimesheetService : ITimesheetService
 
     public Timesheet GetTimesheetByWeekNumber(int weekNumber, int workerId)
     {
-        int internalWeekNumber = weekNumber;
-        List<Timesheet> demoTimesheets = new List<Timesheet>();
-
-        Timesheet demoTimesheet1 = GetTimesheetForCurrentWeek(workerId);
-        demoTimesheet1.WeekNumber = internalWeekNumber;
-        demoTimesheets.Add(demoTimesheet1);
-
-        Timesheet demoTimesheet2 = GetTimesheetForCurrentWeek(workerId);
-        demoTimesheet2.WeekNumber = internalWeekNumber - 1;
-        demoTimesheets.Add(demoTimesheet2);
-
-        Timesheet demoTimesheet3 = GetTimesheetForCurrentWeek(workerId);
-        demoTimesheet3.WeekNumber = internalWeekNumber - 2;
-        demoTimesheets.Add(demoTimesheet3);
-
-        var result = demoTimesheets.Where(sheet => sheet.WeekNumber == weekNumber).SingleOrDefault();
-
-        return result;
+        return GenerateTimesheet(weekNumber, workerId);
     }
 
     public Timesheet GetTimesheetForCurrentWeek(int workerId)
     {
-        //TODO: Should fetch timesheet from persistance layer (Umb DB)
         int weekNumber = _timeService.GetCurrentWeekNumber();
+        return GenerateTimesheet(weekNumber, workerId);
+    }
+
+    private Timesheet GenerateTimesheet(int weekNumber, int workerId)
+    {
+        //TODO: Should fetch timesheet from persistance layer (Umb DB)
         int[] weekDates = _timeService.GetCurrentWeekDates(weekNumber);
 
         Timesheet currentTimesheetWeek = new();

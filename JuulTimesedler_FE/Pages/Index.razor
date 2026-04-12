@@ -37,17 +37,19 @@
 	else
 	{
 		<!-- GetTimesheetForWeekNumber -->
-		<MudAppBar Color="Color.Primary" Fixed="false">
-			<MudButton OnClick="ViewModel.GetTimesheetPrevWeek">
-				<MudIcon Class="mud-theme-primary" Icon="@Icons.Material.Filled.ChevronLeft" />
-			</MudButton>
-			<MudSpacer />
-			<MudText Typo="Typo.h5">Week # @ViewModel.Timesheet.WeekNumber</MudText>
-			<MudSpacer />
-			<MudButton OnClick="ViewModel.GetTimesheetNextWeek">
-				<MudIcon Class="mud-theme-primary" Icon="@Icons.Material.Filled.ChevronRight" />
-			</MudButton>
-		</MudAppBar>
+		<MudPaper Class="mud-theme-primary" Elevation="1">
+			<MudToolBar>
+				<MudButton OnClick="ViewModel.GetTimesheetPrevWeek">
+					<MudIcon Class="mud-theme-primary" Icon="@Icons.Material.Filled.ChevronLeft" />
+				</MudButton>
+				<MudSpacer />
+				<MudText Typo="Typo.h5">Week # @ViewModel.Timesheet.WeekNumber</MudText>
+				<MudSpacer />
+				<MudButton OnClick="ViewModel.GetTimesheetNextWeek">
+					<MudIcon Class="mud-theme-primary" Icon="@Icons.Material.Filled.ChevronRight" />
+				</MudButton>
+			</MudToolBar>
+		</MudPaper>
 
 		<MudTabs AlwaysShowScrollButtons="true"
 				 Class="mt-4"

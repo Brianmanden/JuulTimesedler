@@ -22,10 +22,15 @@ public class ProjectController : Controller
 		IPublishedContent? rootNode = await Task.Run(() => _umbracoHelper.ContentAtRoot().FirstOrDefault());
 		if (rootNode == null)
 		{
-			return new List<GetProjectDTO>();
+			return GetDemoProjects();
 		}
 
 		IEnumerable<IPublishedContent> projects = await Task.Run(() => rootNode.Children().DescendantsOrSelfOfType("project").ToList());
+
+		if (!projects.Any())
+		{
+			return GetDemoProjects();
+		}
 
 		List<GetProjectDTO> allProjectsList = new();
 
@@ -40,5 +45,15 @@ public class ProjectController : Controller
 		}
 
 		return allProjectsList;
+	}
+
+	private List<GetProjectDTO> GetDemoProjects()
+	{
+		return new List<GetProjectDTO>
+		{
+			new GetProjectDTO { ProjectId = 1113, ProjectName = "Demo Project Alpha", ProjectFullName = "Demo Project Alpha - Full Name" },
+			new GetProjectDTO { ProjectId = 1104, ProjectName = "Demo Project Beta", ProjectFullName = "Demo Project Beta - Full Name" },
+			new GetProjectDTO { ProjectId = 1234, ProjectName = "Internal Work", ProjectFullName = "Internal Work - Admin" }
+		};
 	}
 }

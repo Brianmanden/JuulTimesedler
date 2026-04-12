@@ -66,13 +66,13 @@ public class IndexViewModel
 		return Projects;
 	}
 
-	public async void GetTimesheetPrevWeek()
+	public async Task GetTimesheetPrevWeek()
 	{
 		int localPrevWeek = Timesheet.WeekNumber - 1;
 		Timesheet = await _timesheetsService.GetTimesheetForWeekNumber(localPrevWeek, User.UserId);
 	}
 
-	public async void GetTimesheetNextWeek()
+	public async Task GetTimesheetNextWeek()
 	{
 		int localNextWeek = Timesheet.WeekNumber + 1;
 		Timesheet = await _timesheetsService.GetTimesheetForWeekNumber(localNextWeek, User.UserId);
